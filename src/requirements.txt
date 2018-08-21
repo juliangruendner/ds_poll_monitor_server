@@ -1,0 +1,14 @@
+flask
+Flask-HTTPAuth
+Flask-RESTful
+flask_sqlalchemy
+passlib
+psycopg2
+flask-restful-swagger-2
+flask_cors
+requests
+uwsgi
+virtualenv
+uwsgi
+flask_restplus
+psutil

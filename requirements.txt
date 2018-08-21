@@ -1,0 +1,8 @@
+flask
+Flask-HTTPAuth
+Flask-RESTful
+flask_sqlalchemy
+flask-restful-swagger-2
+flask_cors
+uwsgi
+flask_restplus
