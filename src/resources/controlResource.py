@@ -1,4 +1,5 @@
 from flask_restful import Resource, Api, reqparse, abort
+from flask_restplus import inputs
 import os
 import signal
 import psutil
@@ -14,11 +15,56 @@ examples = [
 class ControlList(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument('data', type=str, required=True, help='No data provided', location='json')
+        #self.parser.add_argument('data', type=str, required=True, help='No data provided', location='json')
+        self.parser.add_argument('pollStatus', type=inputs.boolean, default=False, required=False, location='args')
+        self.parser.add_argument('changeStatus', type=str, default=False, required=False, location='args')
         super(ControlList, self).__init__()
 
     def get(self):
 
+        args = self.parser.parse_args()
+        if args['pollStatus']:
+           return {"status": self.get_poll_active()}
+
+        regex = '.*python*'
+        process_dicts = self.get_process_by_cmd_regex(regex)
+             
+        return process_dicts
+
+    def delete(self):
+
+        if self.get_poll_active() == False:
+            return {"status": False}
+
+        for proc in psutil.process_iter():
+            try:
+                pinfo = proc.as_dict(attrs=['pid', 'cmdline', 'name', 'username'])
+            except psutil.NoSuchProcess:
+                pass
+            else:
+
+                cur_cmdline = pinfo['cmdline']
+
+                r = re.compile('.*ds_poll.py*')
+                if any(r.match(line) for line in cur_cmdline):
+                    proc.kill()
+                    return {"status": False}
+
+        return {"status": False}
+
+    def post(self):
+        args = self.parser.parse_args()
+
+        pollActive = self.get_poll_active()
+        #status_new= args['changeStatus']
+    
+        if not pollActive:
+            proc = psutil.Popen(['python3', '/root/ds_poll/ds_poll.py' ,'-q' ,'queue_server:8001' ,'-o', 'datashield_opal:8443', '-s' ,'-v'])
+            return {"status": True}
+
+        return {"status": self.get_poll_active()}, 201
+
+    def get_process_by_cmd_regex(self, regex):
         process_dicts = []
 
         for proc in psutil.process_iter():
@@ -27,43 +73,20 @@ class ControlList(Resource):
             except psutil.NoSuchProcess:
                 pass
             else:
-
                 cur_cmdline = pinfo['cmdline']
-
-                r = re.compile('.*python.*')
+                r = re.compile(regex)
                 if any(r.match(line) for line in cur_cmdline):
-                    process_dict = {"pid": pinfo['pid'], "cmd_line": cur_cmdline }
+                    process_dict = {"id": pinfo['pid'], "cmd": cur_cmdline }
                     process_dicts.append(process_dict)
         
-                    
         return process_dicts
 
-    def delete(self):
 
-        for proc in psutil.process_iter():
-            try:
-                pinfo = proc.as_dict(attrs=['pid', 'cmdline', 'name', 'username'])
-            except psutil.NoSuchProcess:
-                pass
-            else:
-
-                cur_cmdline = pinfo['cmdline']
-
-                r = re.compile('.*python.*')
-                if any(r.match(line) for line in cur_cmdline):
-                    print(pinfo['pid'])
-                    print(cur_cmdline)
-
-        return "poll killed muhahaha"
-
-    def post(self):
-        args = self.parser.parse_args()
-        example = {
-            'id': examples[-1]['id'] + 1,
-            'data': args['data']
-        }
-        examples.append(example)
-        return example, 201
+    def get_poll_active(self):
+        regex = '.*ds_poll.py'
+        process_dicts = self.get_process_by_cmd_regex(regex)
+        return bool(process_dicts)
+    
 
 class Control(Resource):
     def __init__(self):
@@ -98,3 +121,4 @@ class Control(Resource):
             if v is not None:
                 example[k] = v
         return example, 201
+
