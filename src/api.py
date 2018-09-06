@@ -3,6 +3,7 @@ from flask_restful_swagger_2 import Api
 from resources.userResource import UserListResource, UserResource, UserLoginResource
 from resources import exampleResource
 from resources import controlResource
+from resources import loggingResource
 from flask_cors import CORS
 from rdb.rdb import connect_to_db, create_all, create_admin_user
 import json
@@ -29,6 +30,8 @@ api.add_resource(UserResource, '/users/<int:user_id>', endpoint='user')
 api.add_resource(exampleResource.ExampleList, '/example', endpoint='examples')
 api.add_resource(exampleResource.Example, '/example/<int:example_id>', endpoint='example')
 api.add_resource(controlResource.ControlList, '/control', endpoint='control')
+api.add_resource(loggingResource.LoggingList, '/logging', endpoint='loggings')
+api.add_resource(loggingResource.Logging, '/logging/<int:log_id>', endpoint='logging')
 
 if __name__ == '__main__':
     # set false in production mode
