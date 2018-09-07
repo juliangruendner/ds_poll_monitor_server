@@ -4,6 +4,7 @@ import os
 import signal
 import psutil
 import re
+import time
 
 examples = [
     {
@@ -60,7 +61,8 @@ class ControlList(Resource):
     
         if not pollActive:
             proc = psutil.Popen(['python3', '/root/ds_poll/ds_poll.py' ,'-q' ,'queue_server:8001' ,'-o', 'datashield_opal:8443', '-s' ,'-v'])
-            return {"status": True}
+            time.sleep(2)
+            return {"status": self.get_poll_active()} #{"status": True}
 
         return {"status": self.get_poll_active()}, 201
 

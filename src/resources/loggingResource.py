@@ -1,6 +1,7 @@
 from flask_restful import Resource, Api, reqparse, abort
 from flask_restplus import inputs
 from flask import send_from_directory
+from flask import Response
 import os
 import sys
 import signal
@@ -12,6 +13,7 @@ import time
 from time import gmtime, strftime
 from util.logSearcher import LogSearcher
 import uuid
+from pathlib import Path
 
 examples = [
     {
@@ -39,12 +41,12 @@ class LoggingList(Resource):
         download = args['download']
 
         if timestamp:
-            plusLines = 4
-            last_request_lines = self.get_log_by_timestamp(timestamp, plusLines)
 
             if download:
-
                 return self.prepare_and_send_logfiles(timestamp, timestamp_end)
+
+            plusLines = 4
+            last_request_lines = self.get_log_by_timestamp(timestamp, plusLines)
 
         else:
             time = strftime("%Y-%m-%d", gmtime())
@@ -95,6 +97,9 @@ class LoggingList(Resource):
         date = timestamp[:4] + '-' + timestamp[4:6] + '-' + timestamp[6:8]
         logfile = date + "_poll.log"
         logfile = "/root/ds_poll/logging/" + logfile
+
+        if not os.path.exists(logfile):
+            return []
         searcher = LogSearcher(logfile)
         timestamp = date + ' ' + timestamp[8:10] + ':' + timestamp[10:12] + ':' + timestamp[12:14]
         return searcher.find(timestamp, plusLines)
@@ -122,12 +127,20 @@ class LoggingList(Resource):
         subprocess.Popen(command)
 
         file_path = logging_path + cur_uuid + '.zip'
+        
         while not os.path.exists(file_path):
             time.sleep(1)
 
-        response = send_from_directory(logging_path, cur_uuid + '.zip' , as_attachment=True)
-        response.headers['content-type'] = 'application/octet-stream'
+        def generate():
+            with open(file_path, 'rb') as content_file:
+                content = content_file.read()
+            
+            return content
+
+        response = Response(generate(),mimetype='application/octet-stream')
+        response.headers.add('Content-Disposition', 'attachment', filename=cur_uuid + '.zip')
         response.status_code = 200
+        os.remove(file_path)
 
         return response
 
