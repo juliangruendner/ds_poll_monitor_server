@@ -7,6 +7,8 @@ services:
     image: httpd:latest
     volumes:
       - ./ds_poll_gui:/var/www/html
+    ports:
+      - "80:80"
   poll_server:
     container_name: poll_server
     image: python:3
