@@ -5,6 +5,8 @@ services:
     container_name: poll_gui_server
     restart: unless-stopped
     image: httpd:latest
+    volumes:
+      - ./ds_poll_gui:/var/www/html
   poll_server:
     container_name: poll_server
     image: python:3
