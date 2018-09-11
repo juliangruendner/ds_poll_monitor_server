@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     image: httpd:latest
     volumes:
-      - ./ds_poll_gui:/var/www/html
+      - ./ds_poll_gui:/usr/local/apache2/htdocs
     ports:
       - "80:80"
   poll_server:
