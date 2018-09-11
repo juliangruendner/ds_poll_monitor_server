@@ -1,5 +1,5 @@
 service_postgres_data/
-
+ds_poll_gui/*
 # Created by https://www.gitignore.io/api/python
 
 ### Python ###
