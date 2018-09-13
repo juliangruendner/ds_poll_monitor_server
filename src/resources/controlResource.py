@@ -5,6 +5,7 @@ import signal
 import psutil
 import re
 import time
+import sys
 
 examples = [
     {
@@ -19,6 +20,8 @@ class ControlList(Resource):
         #self.parser.add_argument('data', type=str, required=True, help='No data provided', location='json')
         self.parser.add_argument('pollStatus', type=inputs.boolean, default=False, required=False, location='args')
         self.parser.add_argument('changeStatus', type=str, default=False, required=False, location='args')
+        self.parser.add_argument('queueServer', type=str, default=False, required=False, location='args')
+        self.parser.add_argument('opalServer', type=str, default=False, required=False, location='args')
         super(ControlList, self).__init__()
 
     def get(self):
@@ -57,12 +60,14 @@ class ControlList(Resource):
         args = self.parser.parse_args()
 
         pollActive = self.get_poll_active()
-        #status_new= args['changeStatus']
-    
+
+        queue_server = args['queueServer'] if args['queueServer'] else 'queue_server:8001'
+        opal_server = args['opalServer'] if args['opalServer'] else 'datashield_opal:8443'
+
         if not pollActive:
-            proc = psutil.Popen(['python3', '/root/ds_poll/ds_poll.py' ,'-q' ,'queue_server:8001' ,'-o', 'datashield_opal:8443', '-s' ,'-v'])
+            proc = psutil.Popen(['python3', '/root/ds_poll/ds_poll.py' ,'-q' ,queue_server ,'-o', opal_server , '-s','-v'], cwd='/root/ds_poll')
             time.sleep(2)
-            return {"status": self.get_poll_active()} #{"status": True}
+            return {"status": self.get_poll_active()} 
 
         return {"status": self.get_poll_active()}, 201
 
