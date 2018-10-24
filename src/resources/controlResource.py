@@ -6,6 +6,7 @@ import psutil
 import re
 import time
 import sys
+import requests
 
 examples = [
     {
@@ -22,6 +23,7 @@ class ControlList(Resource):
         self.parser.add_argument('changeStatus', type=str, default=False, required=False, location='args')
         self.parser.add_argument('queueServer', type=str, default=False, required=False, location='args')
         self.parser.add_argument('opalServer', type=str, default=False, required=False, location='args')
+        self.parser.add_argument('resetQueue', type=str, default=False, required=False, location='args')
         super(ControlList, self).__init__()
 
     def get(self):
@@ -36,6 +38,11 @@ class ControlList(Resource):
         return process_dicts
 
     def delete(self):
+        args = self.parser.parse_args()
+        if args['resetQueue']:
+            request = 'https://' + args['queueServer']
+            res = requests.get(request, params={'resetQueue': True}, verify=False)
+            return "queue reset", 200
 
         if self.get_poll_active() == False:
             return {"status": False}
