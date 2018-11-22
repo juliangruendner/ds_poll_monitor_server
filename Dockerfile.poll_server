@@ -1,0 +1,9 @@
+from python:3
+
+RUN apt-get update
+RUN apt-get install -y zip
+RUN pip install ds-common
+ADD ./ds_poll /root/ds_poll
+ADD ./ds_poll_monitor_server/src /root/src
+
+CMD bash -c "cd /root/src && chmod +x startup.prod.sh && ./startup.prod.sh"

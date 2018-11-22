@@ -4,25 +4,19 @@ services:
   poll_gui_server:
     container_name: poll_gui_server
     restart: unless-stopped
-    image: httpd:latest
-    volumes:
-      - ./ds_poll_gui:/usr/local/apache2/htdocs
+    image: ds_poll_gui
+    environment:
+    - OPAL_SERVER_IP=127.0.0.1 # define timeout for requests
     ports:
       - "80:80"
   poll_server:
     container_name: poll_server
-    image: python:3
+    image: ds_poll
     restart: unless-stopped
-    depends_on:
-      - db
-      - mongodb
     ports:
       - "5000:5000"
     networks:
       - datashield_docker_opal_net
-      - backend
-    links:
-      - db
     volumes:
       - ./src:/root/src
       - ../ds_poll:/root/ds_poll
@@ -30,36 +24,7 @@ services:
     env_file:
       - config_service.env
       - config_db.env
-    command: bash -c "cd /root/src && chmod +x startup.dev.sh && ./startup.dev.sh"
-
-  db:
-    container_name: poll_monitor_db
-    restart: unless-stopped
-    image: postgres:latest
-    restart: unless-stopped
-    env_file:
-      - config_db.env
-    ports:
-      - "5433:5432"
-    volumes:
-      - ./service_postgres_data:/var/lib/postgresql/data
-    networks:
-      - backend
-  
-  mongodb:
-    container_name: poll_monitor_mongodb
-    image: mongo:3.6
-    restart: unless-stopped
-    networks:
-      - backend
-    expose:
-      - "27017" # process
-      - "28017" # http
-    ports:
-      - "127.0.0.1:27017:27017"
-      - "127.0.0.1:28017:28017"
 
 networks:
   datashield_docker_opal_net:
     external: true
-  backend:

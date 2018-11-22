@@ -1,0 +1,12 @@
+FROM httpd:latest
+
+RUN apt-get update
+RUN apt-get install -y zip
+
+ADD ./poll_gui.zip /
+ADD ./initGui.sh /
+
+RUN unzip /poll_gui.zip -d /
+RUN mkdir /usr/local/apache2/htdocs/poll-monitor && cp -R /dist/* /usr/local/apache2/htdocs/poll-monitor
+
+CMD /initGui.sh

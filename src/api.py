@@ -20,7 +20,7 @@ api = Api(app,
           security=[{"basicAuth": []}], security_definitions={"basicAuth": {"type": "basic"}})  # Wrap the Api and add /api/swagger endpoint
 
 
-connect_to_db(app)
+# connect_to_db(app)
 # create_all()   //comment in to create all tables for models on startup
 # create_admin_user()  //creates admin user
 

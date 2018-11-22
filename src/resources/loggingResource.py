@@ -49,10 +49,13 @@ class LoggingList(Resource):
             last_request_lines = self.get_log_by_timestamp(timestamp, plusLines)
 
         else:
-            time = strftime("%Y-%m-%d", gmtime())
-            logfile = time + "_poll.log"
-            logfile = "/root/ds_poll/logging/" + logfile
-            last_request_lines = self.tail(logfile, 5)
+            plusLines = 4
+            timestamp = strftime("%Y%m%d%H%M%S", gmtime())
+            last_request_lines = self.get_log_by_timestamp(timestamp, plusLines)
+            #time = strftime("%Y-%m-%d", gmtime())
+            #logfile = time + "_poll.log"
+            #logfile = "/root/ds_poll/logging/" + logfile
+            #last_request_lines = self.tail(logfile, 5)
 
         requests = self.convert_log_to_json(last_request_lines)
         
