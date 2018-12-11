@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     image: ds_poll_gui
     environment:
-    - OPAL_SERVER_IP=127.0.0.1 # define timeout for requests
+    - OPAL_SERVER_IP=${OPAL_ADMIN_PASS} # define timeout for requests
     ports:
       - "80:80"
   poll_server:
