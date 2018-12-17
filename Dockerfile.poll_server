@@ -5,5 +5,6 @@ RUN apt-get install -y zip
 RUN pip install ds-common
 ADD ./ds_poll /root/ds_poll
 ADD ./ds_poll_monitor_server/src /root/src
+ADD ./ds_poll_monitor_server/poll_admin.sh /
 
 CMD bash -c "cd /root/src && chmod +x startup.prod.sh && ./startup.prod.sh"
