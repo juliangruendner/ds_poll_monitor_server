@@ -9,6 +9,9 @@ services:
     - OPAL_SERVER_IP=${OPAL_SERVER_IP} # define timeout for requests
     ports:
       - "80:80"
+      - "443:443"
+    networks:
+      - ds_opal_opal_net
   poll_server:
     container_name: poll_server
     image: ds_poll
@@ -16,7 +19,7 @@ services:
     ports:
       - "5000:5000"
     networks:
-      - datashield_docker_opal_net
+      - ds_opal_opal_net
     volumes:
       - ./src:/root/src
       - ../ds_poll:/root/ds_poll
@@ -26,5 +29,5 @@ services:
       - config_db.env
 
 networks:
-  datashield_docker_opal_net:
+  ds_opal_opal_net:
     external: true

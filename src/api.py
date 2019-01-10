@@ -29,7 +29,7 @@ api.add_resource(UserLoginResource, '/users/login', endpoint='user_login')
 api.add_resource(UserResource, '/users/<int:user_id>', endpoint='user')
 api.add_resource(exampleResource.ExampleList, '/example', endpoint='examples')
 api.add_resource(exampleResource.Example, '/example/<int:example_id>', endpoint='example')
-# api.add_resource(controlResource.ControlList, '/control', endpoint='control')
+api.add_resource(controlResource.ControlList, '/control', endpoint='control')
 api.add_resource(loggingResource.LoggingList, '/logging', endpoint='loggings')
 api.add_resource(loggingResource.Logging, '/logging/<int:log_id>', endpoint='logging')
 

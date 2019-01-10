@@ -1,12 +1,11 @@
-FROM httpd:latest
+FROM nginx:1.15
 
 RUN apt-get update
 RUN apt-get install -y zip
 
 ADD ./poll_gui.zip /
-ADD ./initGui.sh /
-
 RUN unzip /poll_gui.zip -d /
-RUN mkdir /usr/local/apache2/htdocs/poll-monitor && cp -R /dist/* /usr/local/apache2/htdocs/poll-monitor
+RUN cp -R /dist/* /usr/share/nginx/html
 
-CMD /initGui.sh
+ADD ./nginx /etc/nginx/conf.d
+ADD ./nginx/pollgui.nginx.conf /etc/nginx/nginx.conf
