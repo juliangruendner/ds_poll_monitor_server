@@ -1,3 +1,5 @@
+#!/bin/bash
+
 apt-get install -y zip
 pip3 install -r requirements.txt
 chmod +x wait-for-it.sh

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from flask import Flask
 from flask_restful_swagger_2 import Api
 from resources.userResource import UserListResource, UserResource, UserLoginResource
@@ -36,3 +38,4 @@ api.add_resource(loggingResource.Logging, '/logging/<int:log_id>', endpoint='log
 if __name__ == '__main__':
     # set false in production mode
     app.run(debug=True, host='0.0.0.0', port=5000)
+
