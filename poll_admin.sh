@@ -16,7 +16,7 @@ function getPollStatus() {
 case "$COMMAND" in
             start )
             echo "Starting poll  with queue server: $QUEUE_SERVER, opal server: $OPAL_SERVER and number of poll threads: $POLL_THREADS"
-            cd /root/ds_poll/ && python3 ds_poll.py $QUEUE_SERVER $OPAL_SERVER -s -v $POLL_THREADS $CHECK_SERVER_CERT
+            cd /home/dspoll/ds_poll && python3 ds_poll.py $QUEUE_SERVER $OPAL_SERVER -s -v $POLL_THREADS $CHECK_SERVER_CERT
             ;;
         
         stop )

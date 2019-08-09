@@ -3,9 +3,16 @@ from python:3
 RUN apt-get update
 RUN apt-get install -y zip
 RUN pip install ds-common
-ADD ./ds_poll /root/ds_poll
-ADD ./ds_poll_monitor_server/src /root/src
-ADD ./ds_poll_monitor_server/poll_admin.sh /
-
+ADD ./ds_poll /home/dspoll/ds_poll
+ADD ./ds_poll_monitor_server/src /home/dspoll/src
+ADD ./ds_poll_monitor_server/poll_admin.sh /home/dspoll/poll_admin.sh
 RUN pip install requests
-CMD bash -c "cd /root/src && chmod +x startup.prod.sh && ./startup.prod.sh"
+RUN groupadd -r dspoll && useradd -r -s /bin/false -g dspoll dspoll
+
+RUN chown -R dspoll:dspoll /home/dspoll
+
+RUN pip3 install -r /home/dspoll/src/requirements.txt
+
+user dspoll
+
+CMD bash -c "cd /home/dspoll/src && chmod +x startup.prod.sh && ./startup.prod.sh"
