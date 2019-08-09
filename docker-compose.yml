@@ -4,10 +4,10 @@ services:
 
   queue_server:
     container_name: queue_server
-    image: python:3
+    image: ds_queue
     volumes:
-      - ../ds_queue:/root/ds_queue
-      - ../ds_common:/root/ds_common
+      - ../ds_queue:/home/dsqueue/ds_queue
+      - ../ds_common:/home/dsqueue/ds_common
     networks:
       - ds_opal_opal_net
     ports:
@@ -29,9 +29,9 @@ services:
     links:
       - db
     volumes:
-      - ./src:/root/src
-      - ../ds_poll:/root/ds_poll
-      - ../ds_common:/root/ds_common
+      - ./src:/home/dspoll/src
+      - ../ds_poll:/home/dspoll/ds_poll
+      - ../ds_common:/home/dspoll/ds_common
     env_file:
       - config_service.env
       - config_db.env
